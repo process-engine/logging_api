@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "logging_api_contracts": "git@github.com:process-engine/logging_api_contracts.git",
+    "logging_api_core": "git@github.com:process-engine/logging_api_core.git",
+    "logging_api_http": "git@github.com:process-engine/logging_api_http.git"
+  }
+}
