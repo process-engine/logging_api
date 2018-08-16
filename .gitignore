@@ -7,6 +7,7 @@ processengine.sqlite
 logging_api_contracts
 logging_api_http
 logging_api_core
+logging.repository.file_system
 
 # OSX-finder info-files
 *.DS_Store
