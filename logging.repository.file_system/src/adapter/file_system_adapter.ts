@@ -83,7 +83,7 @@ export async function moveLogFileToArchive(archiveFolderPath, fileToMove): Promi
 
   const timeTagForArchivedFile = moment()
     .toISOString()
-    .replace(/\:/g, '_')
+    .replace(/:/g, '_')
     .replace(/\./g, '_');
 
   const sourceFileInfo = path.parse(fileToMove);

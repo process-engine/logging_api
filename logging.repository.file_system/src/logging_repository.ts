@@ -1,4 +1,9 @@
-import {ILoggingRepository, LogEntry, LogLevel} from '@process-engine/logging_api_contracts';
+import {
+  ILoggingRepository,
+  ILoggingRepositoryConfig,
+  LogEntry,
+  LogLevel,
+} from '@process-engine/logging_api_contracts';
 
 import * as moment from 'moment';
 import * as path from 'path';
@@ -7,7 +12,7 @@ import * as FileSystemAdapter from './adapter';
 
 export class LoggingRepository implements ILoggingRepository {
 
-  public config: any;
+  public config: ILoggingRepositoryConfig;
 
   public async readLogForProcessModel(processModelId: string): Promise<Array<LogEntry>> {
 
