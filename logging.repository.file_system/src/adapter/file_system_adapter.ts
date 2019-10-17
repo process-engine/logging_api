@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
+import * as moment from 'moment';
 import * as path from 'path';
 
 import {LogEntry} from '@process-engine/logging_api_contracts';
@@ -76,4 +77,18 @@ export function readAndParseFile(filePath: string): Array<LogEntry> {
   const logEntries = logEntriesFiltered.map(parseLogEntry);
 
   return logEntries;
+}
+
+export async function moveLogFileToArchive(fileToMove: string): Promise<void> {
+
+  const archiveFolderPath = path.resolve(this.config.output_path, 'archive');
+  await ensureDirectoryExists(archiveFolderPath);
+
+  const timeTagForArchivedFile = moment().toISOString();
+
+  const fileInfo = path.parse(fileToMove);
+
+  const archivedFileName = `${fileInfo.name}-${timeTagForArchivedFile}${fileInfo.ext}`;
+
+  fs.renameSync(fileToMove, archivedFileName);
 }
