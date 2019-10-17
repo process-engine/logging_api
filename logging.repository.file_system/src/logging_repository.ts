@@ -79,6 +79,19 @@ export class LoggingRepository implements ILoggingRepository {
     await this.writeLogEntryToFileSystem(processModelId, ...logEntryValues);
   }
 
+  public async archiveProcessModelLogs(processModelId: string): Promise<void> {
+
+    const fileNameWithExtension = `${processModelId}.log`;
+
+    const targetFilePath = this.buildPath(fileNameWithExtension);
+
+    const processModelHasNoLogs = !FileSystemAdapter.targetExists(targetFilePath);
+    if (processModelHasNoLogs) {
+      return;
+    }
+    await FileSystemAdapter.moveLogFileToArchive(processModelId);
+  }
+
   private async writeLogEntryToFileSystem(processModelId: string, ...values: Array<string>): Promise<void> {
 
     const fileNameWithExtension = `${processModelId}.log`;
