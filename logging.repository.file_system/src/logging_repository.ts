@@ -90,10 +90,11 @@ export class LoggingRepository implements ILoggingRepository {
       return;
     }
 
-    const archiveFolderPath = path.resolve(this.config.output_path, 'archive');
-    await FileSystemAdapter.ensureDirectoryExists(archiveFolderPath);
+    const archiveFolderToUse = this.config.archive_path
+      ? path.resolve(path.normalize(this.config.archive_path))
+      : path.resolve(this.config.output_path, 'archive');
 
-    await FileSystemAdapter.moveLogFileToArchive(processModelId);
+    await FileSystemAdapter.moveLogFileToArchive(archiveFolderToUse, targetFilePath);
   }
 
   private async writeLogEntryToFileSystem(processModelId: string, ...values: Array<string>): Promise<void> {

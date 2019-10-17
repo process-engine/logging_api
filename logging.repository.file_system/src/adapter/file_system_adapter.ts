@@ -79,13 +79,19 @@ export function readAndParseFile(filePath: string): Array<LogEntry> {
   return logEntries;
 }
 
-export async function moveLogFileToArchive(fileToMove: string): Promise<void> {
+export async function moveLogFileToArchive(archiveFolderPath, fileToMove): Promise<void> {
 
-  const timeTagForArchivedFile = moment().toISOString();
+  const timeTagForArchivedFile = moment()
+    .toISOString()
+    .replace(/\:/g, '_')
+    .replace(/\./g, '_');
 
-  const fileInfo = path.parse(fileToMove);
+  const sourceFileInfo = path.parse(fileToMove);
 
-  const archivedFileName = `${fileInfo.name}-${timeTagForArchivedFile}${fileInfo.ext}`;
+  const archivedFileName = `${sourceFileInfo.name}-${timeTagForArchivedFile}${sourceFileInfo.ext}`;
+  const archivedFilePath = path.resolve(archiveFolderPath, archivedFileName);
 
-  fs.renameSync(fileToMove, archivedFileName);
+  await ensureDirectoryExists(archivedFilePath);
+
+  fs.renameSync(fileToMove, archivedFilePath);
 }
