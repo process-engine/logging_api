@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/process-engine/logging_api_core#readme",
   "dependencies": {
-    "@process-engine/logging_api_contracts": "2.0.0-alpha.3",
+    "@process-engine/logging_api_contracts": "feature~import_values_from_metrics_api",
     "moment": "^2.24.0"
   },
   "devDependencies": {
