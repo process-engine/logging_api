@@ -74,7 +74,8 @@ export function readAndParseFile(filePath: string): Array<LogEntry> {
     return isNotEmpty && isNotAComment;
   });
 
-  const logEntries = logEntriesFiltered.map(parseLogEntry);
+  const convertedLogs = logEntriesFiltered.map(parseLogEntry);
+  const logEntries = convertedLogs.filter((entry): boolean => entry !== undefined);
 
   return logEntries;
 }
