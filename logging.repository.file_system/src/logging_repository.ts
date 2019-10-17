@@ -89,6 +89,10 @@ export class LoggingRepository implements ILoggingRepository {
     if (processModelHasNoLogs) {
       return;
     }
+
+    const archiveFolderPath = path.resolve(this.config.output_path, 'archive');
+    await FileSystemAdapter.ensureDirectoryExists(archiveFolderPath);
+
     await FileSystemAdapter.moveLogFileToArchive(processModelId);
   }
 

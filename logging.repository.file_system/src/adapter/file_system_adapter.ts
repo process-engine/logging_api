@@ -81,9 +81,6 @@ export function readAndParseFile(filePath: string): Array<LogEntry> {
 
 export async function moveLogFileToArchive(fileToMove: string): Promise<void> {
 
-  const archiveFolderPath = path.resolve(this.config.output_path, 'archive');
-  await ensureDirectoryExists(archiveFolderPath);
-
   const timeTagForArchivedFile = moment().toISOString();
 
   const fileInfo = path.parse(fileToMove);
