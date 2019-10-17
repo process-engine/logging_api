@@ -30,12 +30,14 @@ export interface ILoggingRepository {
    * @param timestamp         Optional: The timestamp to use for the log entry.
    *                          Defaults to "now".
    */
-  writeLogForProcessModel(correlationId: string,
+  writeLogForProcessModel(
+    correlationId: string,
     processModelId: string,
     processInstanceId: string,
     logLevel: LogLevel,
     message: string,
-    timestamp?: Date): Promise<void>;
+    timestamp?: Date,
+  ): Promise<void>;
 
   /**
    * Writes a log entry for a specific FlowNode of a ProcessModel within a
@@ -55,12 +57,24 @@ export interface ILoggingRepository {
    * @param timestamp          Optional: The timestamp to use for the log entry.
    *                           Defaults to "now".
    */
-  writeLogForFlowNode(correlationId: string,
+  writeLogForFlowNode(
+    correlationId: string,
     processModelId: string,
     processInstanceId: string,
     flowNodeInstanceId: string,
     flowNodeId: string,
     logLevel: LogLevel,
     message: string,
-    timestamp?: Date): Promise<void>;
+    timestamp?: Date,
+  ): Promise<void>;
+
+  /**
+   * Places all logs for the given ProcessModel into the "archive" folder.
+   * Essentially, this is pretty much like "deleting" the logs, as they will no longer be available.
+   *
+   * However, since logs are somewhat sensitive, they will not be deleted, but archived.
+   *
+   * @param processModelId
+   */
+  archiveProcessModelLogs(processModelId: string): Promise<void>;
 }

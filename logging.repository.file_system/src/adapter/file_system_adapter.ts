@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
+import * as moment from 'moment';
 import * as path from 'path';
 
 import {LogEntry} from '@process-engine/logging_api_contracts';
@@ -73,7 +74,25 @@ export function readAndParseFile(filePath: string): Array<LogEntry> {
     return isNotEmpty && isNotAComment;
   });
 
-  const logEntries = logEntriesFiltered.map(parseLogEntry);
+  const convertedLogs = logEntriesFiltered.map(parseLogEntry);
+  const logEntries = convertedLogs.filter((entry): boolean => entry !== undefined);
 
   return logEntries;
+}
+
+export async function moveLogFileToArchive(archiveFolderPath, fileToMove): Promise<void> {
+
+  const timeTagForArchivedFile = moment()
+    .toISOString()
+    .replace(/:/g, '_')
+    .replace(/\./g, '_');
+
+  const sourceFileInfo = path.parse(fileToMove);
+
+  const archivedFileName = `${sourceFileInfo.name}-${timeTagForArchivedFile}${sourceFileInfo.ext}`;
+  const archivedFilePath = path.resolve(archiveFolderPath, archivedFileName);
+
+  await ensureDirectoryExists(archivedFilePath);
+
+  fs.renameSync(fileToMove, archivedFilePath);
 }

@@ -4,7 +4,12 @@ import {LogEntry, LogLevel} from '@process-engine/logging_api_contracts';
 
 export function parseFlowNodeInstanceLog(logData: Array<string>): LogEntry {
 
-  return parseAsV1(logData);
+  const isV1 = logData[0] === 'FlowNodeInstance';
+  if (isV1) {
+    return parseAsV1(logData);
+  }
+
+  return undefined;
 }
 
 function parseAsV1(logData: Array<string>): LogEntry {

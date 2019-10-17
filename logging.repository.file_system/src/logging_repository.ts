@@ -1,4 +1,9 @@
-import {ILoggingRepository, LogEntry, LogLevel} from '@process-engine/logging_api_contracts';
+import {
+  ILoggingRepository,
+  ILoggingRepositoryConfig,
+  LogEntry,
+  LogLevel,
+} from '@process-engine/logging_api_contracts';
 
 import * as moment from 'moment';
 import * as path from 'path';
@@ -7,7 +12,7 @@ import * as FileSystemAdapter from './adapter';
 
 export class LoggingRepository implements ILoggingRepository {
 
-  public config: any;
+  public config: ILoggingRepositoryConfig;
 
   public async readLogForProcessModel(processModelId: string): Promise<Array<LogEntry>> {
 
@@ -77,6 +82,24 @@ export class LoggingRepository implements ILoggingRepository {
     ];
 
     await this.writeLogEntryToFileSystem(processModelId, ...logEntryValues);
+  }
+
+  public async archiveProcessModelLogs(processModelId: string): Promise<void> {
+
+    const fileNameWithExtension = `${processModelId}.log`;
+
+    const targetFilePath = this.buildPath(fileNameWithExtension);
+
+    const processModelHasNoLogs = !FileSystemAdapter.targetExists(targetFilePath);
+    if (processModelHasNoLogs) {
+      return;
+    }
+
+    const archiveFolderToUse = this.config.archive_path
+      ? path.resolve(path.normalize(this.config.archive_path))
+      : path.resolve(this.config.output_path, 'archive');
+
+    await FileSystemAdapter.moveLogFileToArchive(archiveFolderToUse, targetFilePath);
   }
 
   private async writeLogEntryToFileSystem(processModelId: string, ...values: Array<string>): Promise<void> {
