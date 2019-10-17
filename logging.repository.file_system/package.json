@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/process-engine/metrics.repository.file_system#readme",
   "dependencies": {
+    "@essential-projects/errors_ts": "^1.5.0",
     "@process-engine/logging_api_contracts": "feature~import_values_from_metrics_api",
     "moment": "^2.24.0"
   },
