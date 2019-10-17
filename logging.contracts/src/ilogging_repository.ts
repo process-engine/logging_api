@@ -1,5 +1,6 @@
 import {LogEntry} from './log_entry';
 import {LogLevel} from './log_level';
+import {MetricMeasurementPoint} from './metric_measurement_point';
 
 /**
  * Contains functions for writing and retrieving content from logfiles.
@@ -27,16 +28,20 @@ export interface ILoggingRepository {
    * @param processInstanceId The instance ID of the ProcessModel.
    * @param logLevel          The loglevel to use.
    * @param message           The message to write into the log entry.
+   * @param measuredAt        The type of log (OnEnter, OnExit, etc).
    * @param timestamp         Optional: The timestamp to use for the log entry.
    *                          Defaults to "now".
+   * @param error             Optional: An error to attach to the log.
    */
   writeLogForProcessModel(
     correlationId: string,
     processModelId: string,
     processInstanceId: string,
     logLevel: LogLevel,
-    message: string,
+    measuredAt: MetricMeasurementPoint,
+    message?: string,
     timestamp?: Date,
+    error?: Error,
   ): Promise<void>;
 
   /**
@@ -54,8 +59,11 @@ export interface ILoggingRepository {
    *                           log entry.
    * @param logLevel           The loglevel to use.
    * @param message            The message to write into the log entry.
+   * @param measuredAt        The type of log (OnEnter, OnExit, etc).
+   * @param tokenPayload       The payload of the FlowNodeInstance's current token.
    * @param timestamp          Optional: The timestamp to use for the log entry.
    *                           Defaults to "now".
+   * @param error              Optional: An error to attach to the log.
    */
   writeLogForFlowNode(
     correlationId: string,
@@ -64,8 +72,11 @@ export interface ILoggingRepository {
     flowNodeInstanceId: string,
     flowNodeId: string,
     logLevel: LogLevel,
-    message: string,
+    measuredAt: MetricMeasurementPoint,
+    tokenPayload: any,
+    message?: string,
     timestamp?: Date,
+    error?: Error,
   ): Promise<void>;
 
   /**
