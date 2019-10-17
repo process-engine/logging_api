@@ -3,12 +3,14 @@ import {
   ILoggingRepositoryConfig,
   LogEntry,
   LogLevel,
+  MetricMeasurementPoint,
 } from '@process-engine/logging_api_contracts';
 
 import * as moment from 'moment';
 import * as path from 'path';
 
-import * as FileSystemAdapter from './adapter';
+import * as Serializer from './adapter/serializer';
+import * as FileSystemAdapter from './adapter/file_system_adapter';
 
 export class LoggingRepository implements ILoggingRepository {
 
@@ -35,14 +37,16 @@ export class LoggingRepository implements ILoggingRepository {
     processModelId: string,
     processInstanceId: string,
     logLevel: LogLevel,
-    message: string,
-    timestamp: Date,
+    measuredAt: MetricMeasurementPoint,
+    message?: string,
+    timestamp?: Date,
+    error?: Error,
   ): Promise<void> {
 
     const timeStampAsIsoString = moment(timestamp).toISOString();
 
     const logEntryValues = [
-      'ProcessModel',
+      'ProcessModel_V2',
       timeStampAsIsoString,
       correlationId,
       processModelId,
@@ -51,6 +55,9 @@ export class LoggingRepository implements ILoggingRepository {
       '',
       logLevel,
       message,
+      measuredAt,
+      '',
+      error ? Serializer.serialize(error) : '',
     ];
 
     await this.writeLogEntryToFileSystem(processModelId, ...logEntryValues);
@@ -63,14 +70,17 @@ export class LoggingRepository implements ILoggingRepository {
     flowNodeInstanceId: string,
     flowNodeId: string,
     logLevel: LogLevel,
-    message: string,
-    timestamp: Date,
+    measuredAt: MetricMeasurementPoint,
+    tokenPayload: any,
+    message?: string,
+    timestamp?: Date,
+    error?: Error,
   ): Promise<void> {
 
     const timeStampAsIsoString = moment(timestamp).toISOString();
 
     const logEntryValues = [
-      'FlowNodeInstance',
+      'FlowNodeInstance_V2',
       timeStampAsIsoString,
       correlationId,
       processModelId,
@@ -78,7 +88,10 @@ export class LoggingRepository implements ILoggingRepository {
       flowNodeInstanceId,
       flowNodeId,
       logLevel,
-      message,
+      message || '',
+      measuredAt,
+      tokenPayload ? JSON.stringify(tokenPayload) : '',
+      error ? Serializer.serialize(error) : '',
     ];
 
     await this.writeLogEntryToFileSystem(processModelId, ...logEntryValues);
