@@ -66,9 +66,11 @@ export function readAndParseFile(filePath: string): Array<LogEntry> {
 
   const logEntriesRaw = logFileContent.split('\n');
 
-  // Filter out empty lines and the final new line.
+  // Filter out empty lines, comments and the final new line.
   const logEntriesFiltered = logEntriesRaw.filter((entry: string): boolean => {
-    return entry.length > 0;
+    const isNotEmpty = entry.length > 0;
+    const isNotAComment = !entry.startsWith('#');
+    return isNotEmpty && isNotAComment;
   });
 
   const logEntries = logEntriesFiltered.map(parseLogEntry);
