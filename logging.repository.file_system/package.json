@@ -1,6 +1,6 @@
 {
   "name": "@process-engine/logging.repository.file_system",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "Contains the file-system repository for the Metrics API. ",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/process-engine/metrics.repository.file_system#readme",
   "dependencies": {
-    "@process-engine/logging_api_contracts": "2.0.0-alpha.1",
+    "@process-engine/logging_api_contracts": "2.0.0-alpha.2",
     "moment": "^2.24.0"
   },
   "devDependencies": {
