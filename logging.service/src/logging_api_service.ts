@@ -1,5 +1,9 @@
 import {
-  ILoggingApi, ILoggingRepository, LogEntry, LogLevel,
+  ILoggingApi,
+  ILoggingRepository,
+  LogEntry,
+  LogLevel,
+  MetricMeasurementPoint,
 } from '@process-engine/logging_api_contracts';
 
 import {IIAMService, IIdentity} from '@essential-projects/iam_contracts';
@@ -24,12 +28,14 @@ export class LoggingApiService implements ILoggingApi {
     processModelId: string,
     processInstanceId: string,
     logLevel: LogLevel,
-    message: string,
-    timestamp: Date,
+    measuredAt: MetricMeasurementPoint,
+    message?: string,
+    timestamp?: Date,
+    error?: Error,
   ): Promise<void> {
     await this
       .loggingRepository
-      .writeLogForProcessModel(correlationId, processModelId, processInstanceId, logLevel, message, timestamp);
+      .writeLogForProcessModel(correlationId, processModelId, processInstanceId, logLevel, measuredAt, message, timestamp, error);
   }
 
   public async writeLogForFlowNode(
@@ -39,12 +45,25 @@ export class LoggingApiService implements ILoggingApi {
     flowNodeInstanceId: string,
     flowNodeId: string,
     logLevel: LogLevel,
-    message: string,
-    timestamp: Date,
+    measuredAt: MetricMeasurementPoint,
+    tokenPayload: any,
+    message?: string,
+    timestamp?: Date,
+    error?: Error,
   ): Promise<void> {
-    await this
-      .loggingRepository
-      .writeLogForFlowNode(correlationId, processModelId, processInstanceId, flowNodeInstanceId, flowNodeId, logLevel, message, timestamp);
+    await this.loggingRepository.writeLogForFlowNode(
+      correlationId,
+      processModelId,
+      processInstanceId,
+      flowNodeInstanceId,
+      flowNodeId,
+      logLevel,
+      measuredAt,
+      tokenPayload,
+      message,
+      timestamp,
+      error,
+    );
   }
 
   public async archiveProcessModelLogs(identity: IIdentity, processModelId: string): Promise<void> {

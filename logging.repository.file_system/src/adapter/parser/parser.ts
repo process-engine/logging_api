@@ -7,7 +7,7 @@ export function parseLogEntry(logEntryRaw: string): LogEntry {
 
   const logEntryRawParts = logEntryRaw.split(';');
 
-  const isFlowNodeInstanceLog = logEntryRawParts[0] === 'FlowNodeInstance';
+  const isFlowNodeInstanceLog = logEntryRawParts[0].startsWith('FlowNodeInstance');
 
   const logEntry = isFlowNodeInstanceLog
     ? parseFlowNodeInstanceLog(logEntryRawParts)

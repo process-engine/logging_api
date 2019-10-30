@@ -2,6 +2,7 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 
 import {LogEntry} from './log_entry';
 import {LogLevel} from './log_level';
+import {MetricMeasurementPoint} from './metric_measurement_point';
 
 /**
  * Contains functions for writing and retrieving content from logfiles.
@@ -29,17 +30,21 @@ export interface ILoggingApi {
    *                          log entry.
    * @param processInstanceId The instance ID of the ProcessModel.
    * @param logLevel          The loglevel to use.
-   * @param message           The message to write into the log entry.
+   * @param measuredAt        The type of log (OnEnter, OnExit, etc).
+   * @param message           Optional: A message for the LogEntry.
    * @param timestamp         Optional: The timestamp to use for the log entry.
    *                          Defaults to "now".
+   * @param error             Optional: An error to attach to the log.
    */
   writeLogForProcessModel(
     correlationId: string,
     processModelId: string,
     processInstanceId: string,
     logLevel: LogLevel,
-    message: string,
+    measuredAt: MetricMeasurementPoint,
+    message?: string,
     timestamp?: Date,
+    error?: Error,
   ): Promise<void>;
 
   /**
@@ -56,9 +61,12 @@ export interface ILoggingApi {
    * @param flowNodeId         The ID of FlowNode for which to create a
    *                           log entry.
    * @param logLevel           The loglevel to use.
-   * @param message            The message to write into the log entry.
+   * @param measuredAt         The type of log (OnEnter, OnExit, etc).
+   * @param message            Optional: The message to write into the log entry.
+   * @param tokenPayload       The payload of the FlowNodeInstance's current token.
    * @param timestamp          Optional: The timestamp to use for the log entry.
    *                           Defaults to "now".
+   * @param error              Optional: An error to attach to the log.
    */
   writeLogForFlowNode(
     correlationId: string,
@@ -67,8 +75,11 @@ export interface ILoggingApi {
     flowNodeInstanceId: string,
     flowNodeId: string,
     logLevel: LogLevel,
-    message: string,
+    measuredAt: MetricMeasurementPoint,
+    tokenPayload: any,
+    message?: string,
     timestamp?: Date,
+    error?: Error,
   ): Promise<void>;
 
   /**
