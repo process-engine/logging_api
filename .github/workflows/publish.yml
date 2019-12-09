@@ -1,0 +1,179 @@
+name: Node CI
+
+on:
+  push:
+    branches:
+      - "*"
+      - "*/*"
+
+jobs:
+  build:
+    name: 'Build, Lint & Test'
+    runs-on: ubuntu-latest
+    if: "!(contains(github.actor, 'process-engine-ci') || contains(github.actor, 'admin'))"
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        version: 12.x
+
+    - name: 'Install dependencies'
+      run: npm install --no-package-lock
+
+    - name: 'Build Contracts'
+      run: npm run build
+      working-directory: ./logging.contracts
+
+    - name: 'Lint Contracts'
+      run: npm run lint
+      working-directory: ./logging.contracts
+
+    - name: 'Build Service'
+      run: npm run build
+      working-directory: ./logging.service
+
+    - name: 'Lint Service'
+      run: npm run lint
+      working-directory: ./logging.service
+
+    - name: 'Run Tests for Service'
+      run: npm test
+      working-directory: ./logging.service
+
+    - name: 'Build Repository File-System'
+      run: npm run build
+      working-directory: ./logging.repository.file_system
+
+    - name: 'Lint Repository File-System'
+      run: npm run lint
+      working-directory: ./logging.repository.file_system
+
+    - name: 'Run Tests for Repository File-System'
+      run: npm test
+      working-directory: ./logging.repository.file_system
+
+    - name: Cache Workdir
+      uses: actions/cache@v1
+      with:
+        path: "."
+        key: npm-${{ github.sha }}
+
+  publish_contracts:
+    name: 'Publish Contracts'
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        version: 12.x
+
+    - name: Cache Workdir
+      uses: actions/cache@v1
+      with:
+        path: "."
+        key: npm-${{ github.sha }}
+
+    - name: 'Prepare version for Contracts'
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+      working-directory: ./logging.contracts
+
+    - name: 'Publish Contracts'
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: ./node_modules/.bin/ci_tools publish-npm-package --ignore-scripts --create-tag-from-branch-name
+      working-directory: ./logging.contracts
+
+  publish_service:
+    name: 'Publish Logging Service'
+    runs-on: ubuntu-latest
+    needs: publish_contracts
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        version: 12.x
+
+    - name: Cache Workdir
+      uses: actions/cache@v1
+      with:
+        path: "."
+        key: npm-${{ github.sha }}
+
+    - name: 'Prepare version'
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+      working-directory: ./logging.service
+
+    - name: 'Publish'
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: ./node_modules/.bin/ci_tools publish-npm-package --ignore-scripts --create-tag-from-branch-name
+      working-directory: ./logging.service
+
+  publish_repository:
+    name: 'Publish Logging Repository'
+    runs-on: ubuntu-latest
+    needs: publish_contracts
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        version: 12.x
+
+    - name: Cache Workdir
+      uses: actions/cache@v1
+      with:
+        path: "."
+        key: npm-${{ github.sha }}
+
+    - name: 'Prepare version'
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+      working-directory: ./logging.repository.file_system
+
+    - name: 'Publish'
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: ./node_modules/.bin/ci_tools publish-npm-package --ignore-scripts --create-tag-from-branch-name
+      working-directory: ./logging.repository.file_system
+
+  publish_github:
+    name: 'Publish GitHub Release'
+    runs-on: ubuntu-latest
+    needs: publish_contracts
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        version: 12.x
+
+    - name: Cache Workdir
+      uses: actions/cache@v1
+      with:
+        path: "."
+        key: npm-${{ github.sha }}
+
+    - name: 'Prepare version'
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+
+    - name: 'Commit & tag version'
+      env:
+        GH_USER: "process-engine-ci"
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        ./node_modules/.bin/ci_tools commit-and-tag-version --only-on-primary-branches
+        ./node_modules/.bin/ci_tools update-github-release --only-on-primary-branches --use-title-and-text-from-git-tag
