@@ -43,9 +43,9 @@ function parseAsV2(logData: Array<string>): LogEntry {
   logEntry.message = logData[8];
   logEntry.measuredAt = <MetricMeasurementPoint> logData[9];
 
-  const serializedError = logData[11].trim();
+  const serializedError = logData[11]?.trim();
 
-  const deserializedError = serializedError.length > 1
+  const deserializedError = serializedError?.length > 1
     ? Serializer.deserialize(serializedError)
     : undefined;
 
