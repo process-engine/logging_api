@@ -80,8 +80,11 @@ jobs:
         path: "."
         key: npm-${{ github.sha }}
 
+    - name: 'Copy and Commit Version'
+      run: ./node_modules/.bin/ci_tools copy-and-commit-version-for-subpackage logging.contracts/
+
     - name: 'Prepare version for Contracts'
-      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir --force
       working-directory: ./logging.contracts
 
     - name: 'Publish Contracts'
@@ -109,8 +112,11 @@ jobs:
         path: "."
         key: npm-${{ github.sha }}
 
+    - name: 'Copy and Commit Version'
+      run: ./node_modules/.bin/ci_tools copy-and-commit-version-for-subpackage logging.service/
+
     - name: 'Prepare version'
-      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir --force
       working-directory: ./logging.service
 
     - name: 'Publish'
@@ -138,8 +144,11 @@ jobs:
         path: "."
         key: npm-${{ github.sha }}
 
+    - name: 'Copy and Commit Version'
+      run: ./node_modules/.bin/ci_tools copy-and-commit-version-for-subpackage logging.repository.file_system/
+
     - name: 'Prepare version'
-      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir
+      run: ./node_modules/.bin/ci_tools prepare-version --allow-dirty-workdir --force
       working-directory: ./logging.repository.file_system
 
     - name: 'Publish'
