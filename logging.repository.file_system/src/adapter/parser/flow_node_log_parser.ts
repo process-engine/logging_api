@@ -44,7 +44,7 @@ function parseAsV2(logData: Array<string>): LogEntry {
   logEntry.flowNodeInstanceId = logData[5];
   logEntry.flowNodeId = logData[6];
   logEntry.logLevel = LogLevel[logData[7]];
-  logEntry.message = logData[8];
+  logEntry.message = Serializer.deserialize(logData[8]);
   logEntry.measuredAt = <MetricMeasurementPoint> logData[9];
 
   const serializedTokenPayload = logData[10]?.trim();
