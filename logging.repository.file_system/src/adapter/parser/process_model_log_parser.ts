@@ -40,7 +40,7 @@ function parseAsV2(logData: Array<string>): LogEntry {
   logEntry.processModelId = logData[3];
   logEntry.processInstanceId = logData[4];
   logEntry.logLevel = LogLevel[logData[7]];
-  logEntry.message = logData[8];
+  logEntry.message = Serializer.deserialize(logData[8]);
   logEntry.measuredAt = <MetricMeasurementPoint> logData[9];
 
   const serializedError = logData[11]?.trim();

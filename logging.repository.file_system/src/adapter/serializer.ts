@@ -15,7 +15,7 @@ export function serialize(error: Error | string): string {
   return JSON.stringify(error);
 }
 
-export function deserialize(error: string): Error {
+export function deserialize(error: string): Error | any {
 
   const essentialProjectsError = tryDeserializeEssentialProjectsError(error);
 
